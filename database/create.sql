@@ -22,7 +22,7 @@ CREATE TABLE poll (
   tripGtfsId text NOT NULL,
   stopGtfsId text NOT NULL,
   scheduledArrival integer NOT NULL,
-  realtimeDeparture integer,
+  realtimeArrival integer,
   arrivalDelay integer NOT NULL,
   scheduledDeparture integer NOT NULL,
   realtimeDeparture integer,
