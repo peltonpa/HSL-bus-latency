@@ -12,7 +12,7 @@ CREATE TABLE trip (
 CREATE TABLE stop (
   gtfsId text NOT NULL,
   name text NOT NULL,
-  desc text NOT NULL,
+  description text NOT NULL,
   url text NOT NULL,
   PRIMARY KEY (gtfsId)
 );
