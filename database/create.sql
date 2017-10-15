@@ -30,6 +30,6 @@ CREATE TABLE poll (
   realtime boolean NOT NULL,
   serviceDay integer NOT NULL,
   FOREIGN KEY (tripGtfsId) REFERENCES trip(gtfsId),
-  FOREIGN KEY (stopGtfsId) REFERENCES stopGtfsId(gtfsId),
+  FOREIGN KEY (stopGtfsId) REFERENCES stop(gtfsId),
   PRIMARY KEY (id)
 );
