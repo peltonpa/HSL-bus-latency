@@ -6,33 +6,35 @@ HEADERS = {'Content-Type': 'application/graphql'}
 
 with open("loaders/bus_data.json") as file:
     bus_data = json.load(file)
-
-for name, data in bus_data.items():
-    route_gtfsId = data.get("gtfsId")
+    
+def get_realtime_bus_data(route_gtfsId, tries = 5):
+    if tries <= 0:
+        raise ValueError("Tries must be at least 1")
     data = f'''
     {{
     route(id: "{route_gtfsId}") {{
         gtfsId
         shortName
         stops {{
-            gtfsId
             name
-            url
-            lat
-            lon
+            gtfsId
             stoptimesWithoutPatterns {{
                 scheduledArrival
                 arrivalDelay
-                timepoint
+                
+                
                 realtime
-                realtimeState
+                
                 serviceDay
+                
+                
+                
                 trip {{
                     gtfsId
-                    id
-                    serviceId
+                    
+                    
                     directionId
-                    tripShortName
+                    
                 }}
             }}
         }}
@@ -40,16 +42,93 @@ for name, data in bus_data.items():
     }}
     '''
 
-    route_data = requests.post(url=URL, data=data, headers=HEADERS)
-    content_json = route_data.json()["data"]
-
-    print("route:", content_json["route"]["shortName"])
+    
+    i = 0
+    while  i < tries:
+        response = requests.post(url=URL, data=data, headers=HEADERS)
+        try:
+            response.raise_for_status()
+        except requests.exceptions.HTTPError:
+            i += 1
+        else:
+            break
+    content_json = response.json()["data"]
+    return content_json
+    
+    
+def filter_next_stop_for_busses(content_json):
+    ## SHOULD WORK
+    final = {}
+    route_name = content_json["route"]["shortName"]
+    route_gtfsId = content_json["route"]["gtfsId"]
     for stop in content_json["route"]["stops"]:
-        print("  stop:", stop["name"])
+        stopGtfsId = stop["name"]
+        
         for stoptime in stop["stoptimesWithoutPatterns"]:
+        
+            # Take only busses that have realtime
             if stoptime["realtime"] and \
-                    route_gtfsId in stoptime["trip"]["gtfsId"]:
-                print("    scheduled: ", stoptime["scheduledArrival"],
-                      ", delay: ", stoptime["arrivalDelay"],
-                      ", id: ", stoptime["trip"]["gtfsId"], sep="")
-    print()
+               route_gtfsId in stoptime["trip"]["gtfsId"]:
+                this_data = {
+                    "stopGtfsId":       stopGtfsId,
+                    
+                    "scheduledArrival": stoptime["scheduledArrival"],
+                    "arrivalDelay":     stoptime["arrivalDelay"],
+                    "realtime":         stoptime["realtime"],
+                    "serviceDay":       stoptime["serviceDay"],
+                    "directionId":      stoptime["trip"]["directionId"]
+                }
+
+                
+                tripGtfsId = stoptime["trip"]["gtfsId"]
+                # take only the stops data that has the minimum scheduled arrival
+                
+                # if no previous, currently nearest is this
+                if (tripGtfsId not in final):
+                    final[tripGtfsId] = this_data
+                    
+                # else if this arrival time is sooner than previous, currently nearest is this
+                elif (this_data["scheduledArrival"]
+                        < final[tripGtfsId]["scheduledArrival"]):
+                    final[tripGtfsId] = this_data
+                  
+     
+    return final
+    
+def yield_changed(old, new):
+    ## NOT TESTED
+    for id, old_data in old.items():
+        if id in new and old_data["stopGtfsId"] == new[id]["stopGtfsId"]:
+            continue
+        yield {id: old_data}
+
+            
+def get_realtime_for_all(data: {"name": "id"}):
+    ## SHOULD WORK
+    all = {}
+    for name, data in data.items():
+        route_gtfsId = data.get("gtfsId")
+        content_json = get_realtime_bus_data(route_gtfsId)
+        next_stops = filter_next_stop_for_busses(content_json)
+        all.update(next_stops)
+    return all
+
+import time 
+
+def main():
+    print(bus_data.keys())
+    # return
+    data = bus_data
+    previous = get_realtime_for_all(data)
+    while True:
+        current = get_realtime_for_all(data)
+        print(json.dumps(current, indent=4))
+        for item in yield_changed(previous, current):
+            print("Changes: ")
+            print(json.dumps(item, indent=4))
+        previous = current
+        time.sleep(1)
+
+
+if __name__ == "__main__":
+    main()
