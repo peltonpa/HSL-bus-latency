@@ -12,7 +12,7 @@ with open("loaders/bus_data.json") as file:
 def get_realtime_bus_data(route_gtfsId, tries = 5):
     if tries <= 0:
         raise ValueError("Tries must be at least 1")
-    data = f'''
+    data = '''
     {{
     route(id: "{route_gtfsId}") {{
         gtfsId
@@ -42,7 +42,7 @@ def get_realtime_bus_data(route_gtfsId, tries = 5):
         }}
       }}
     }}
-    '''
+    '''.format(route_gtfsId=route_gtfsId)
 
     
     i = 0
