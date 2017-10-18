@@ -14,8 +14,8 @@ CREATE TABLE stops (
   name text NOT NULL,
   description text NOT NULL,
   url text NOT NULL,
-  lon integer NOT NULL,
-  lat integer NOT NULL,
+  lon double precision NOT NULL,
+  lat double precision NOT NULL,
   PRIMARY KEY (gtfsId)
 );
 
