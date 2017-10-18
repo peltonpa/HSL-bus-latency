@@ -65,7 +65,7 @@ def filter_next_stop_for_busses(content_json):
     route_name = content_json["route"]["shortName"]
     route_gtfsId = content_json["route"]["gtfsId"]
     for stop in content_json["route"]["stops"]:
-        stopGtfsId = stop["name"]
+        stopGtfsId = stop["gtfsId"]
         
         for stoptime in stop["stoptimesWithoutPatterns"]:
         
