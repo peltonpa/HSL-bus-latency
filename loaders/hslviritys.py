@@ -6,7 +6,7 @@ import datetime
 URL = 'https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql'
 HEADERS = {'Content-Type': 'application/graphql'}
 
-with open("loaders/bus_data.json") as file:
+with open("bus_data.json") as file:
     bus_data = json.load(file)
     
 def get_realtime_bus_data(route_gtfsId, tries = 5):
