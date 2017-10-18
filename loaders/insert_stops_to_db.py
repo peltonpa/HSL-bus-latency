@@ -24,11 +24,3 @@ for key, value in bus_data.items():
         cur.execute(insert)
 
 conn.commit()
-
-'''
-
-for key, value in bus_data.items():
-    for stop in bus_data[key]["stops"]:
-        print(stop)
-'''
-
