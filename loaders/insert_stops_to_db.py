@@ -9,7 +9,6 @@ with open("bus_data.json") as file:
 
 conn = psycopg2.connect(connstring)
 cur = conn.cursor()
-cur.execute("""INSERT INTO stops VALUES ('joo', 'ei', 'ei', 'joo', 2, 2)""")
 for key, value in bus_data.items():
     for stop in bus_data[key]["stops"]:
         params = [stop["gtfsId"], stop["name"], stop["desc"], stop["url"], stop["lon"], stop["lat"]]
