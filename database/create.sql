@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS polls CASCADE;
 
 CREATE TABLE trips (
   gtfsId text NOT NULL,
-  directionId integer NOT NULL,
+  directionId integer,
   PRIMARY KEY (gtfsId)
 );
 
