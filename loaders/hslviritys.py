@@ -2,6 +2,7 @@ import requests
 import json
 import time 
 import datetime
+from insert_poll_to_db import db_inserter
 
 URL = 'https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql'
 HEADERS = {'Content-Type': 'application/graphql'}
@@ -149,6 +150,7 @@ def update_current(old, new, discard_min = 5):
     
     
 def main():
+    inserter = db_inserter()
     print(bus_data.keys())
     # return
     data = {"550": bus_data["550"]}
@@ -159,6 +161,8 @@ def main():
         for id, item in visited_stops.items():
             print("# CHANGED: ", id,  json.dumps(item, indent=4))
             print("next: ", json.dumps(previous.get(id), indent=4))
+            inserter.insert_trip(id, item)
+            inserter.insert_poll(id, item)
         time.sleep(1)
 
 
