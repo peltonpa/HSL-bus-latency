@@ -121,27 +121,31 @@ def seconds_from_midnight():
     
 
 def update_current(old, new, discard_min = 5):
-    """ Returns tuple(updated, discarded)"""
+    """ Returns tuple(updated, visited_stops)"""
     
     # discard time is now + n minutes
     discard_time = seconds_from_midnight()  + discard_min *60
     print(discard_time)
     updated = old.copy()
-    discarded = {}
+    visited_stops = {}
     for id, old_data in old.items():
-        if id in new and old_data["stopGtfsId"] == new[id]["stopGtfsId"]:
-            continue
-            
+        # If the next stop is changed and it is later than current next stop
+        if id in new and (old_data["stopGtfsId"] != new[id]["stopGtfsId"] 
+                     and new[id]["scheduledArrival"] > old_data["scheduledArrival"]):
+            visited_stops[id] = old_data
+            updated[id] = new[id]
+        
+        # if some bus has been out of radat for discard_min minutes 
         elif id not in new and (old_data["scheduledArrival"] + old_data["arrivalDelay"]
-                              > discard_time):
-            discarded[id] = old_data
+                                    > discard_time):
+            visited_stops[id] = old_data
             del updated[id]
-        elif id in new:
-            discarded[id] = old_data
-            del updated[id]
+        
+    for id in new:
+        if id not in updated:
+            updated[id] = new[id]
     
-    updated.update(new)
-    return updated, discarded
+    return updated, visited_stops
     
     
 def main():
@@ -151,8 +155,8 @@ def main():
     previous = get_realtime_for_all(data)
     while True:
         current = get_realtime_for_all(data)
-        previous, discarded = update_current(previous, current)
-        for id, item in discarded.items():
+        previous, visited_stops = update_current(previous, current)
+        for id, item in visited_stops.items():
             print("# CHANGED: ", id,  json.dumps(item, indent=4))
             print("next: ", json.dumps(previous.get(id), indent=4))
         time.sleep(1)
