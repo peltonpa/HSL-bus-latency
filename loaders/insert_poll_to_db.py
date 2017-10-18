@@ -20,7 +20,7 @@ class db_inserter():
     
     def insert_poll(self, id, data):
         params = [id, data["stopGtfsId"], data["scheduledArrival"], data["arrivalDelay"]]
-        drop = "DELETE FROM polls WHERE tripGtfsId = '{0}' AND stopGtfsId = '{1}".format(id, data["stopGtfsId"])
+        drop = "DELETE FROM polls WHERE tripGtfsId = '{0}' AND stopGtfsId = '{1}'".format(id, data["stopGtfsId"])
         insert = "INSERT INTO polls VALUES (DEFAULT, '{0}', '{1}', {2}, {3}, DEFAULT)".format(*params)
         self.cur.execute(drop)
         self.cur.execute(insert)
