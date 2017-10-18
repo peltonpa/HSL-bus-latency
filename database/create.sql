@@ -1,35 +1,32 @@
-DROP TABLE IF EXISTS trip;
-DROP TABLE IF EXISTS stop;
-DROP TABLE IF EXISTS poll;
+DROP TABLE IF EXISTS trips CASCADE;
+DROP TABLE IF EXISTS stops CASCADE;
+DROP TABLE IF EXISTS polls CASCADE;
 
-CREATE TABLE trip (
+CREATE TABLE trips (
   gtfsId text NOT NULL,
   tripHeadsign text NOT NULL,
   directionId integer NOT NULL,
   PRIMARY KEY (gtfsId)
 );
 
-CREATE TABLE stop (
+CREATE TABLE stops (
   gtfsId text NOT NULL,
   name text NOT NULL,
   description text NOT NULL,
   url text NOT NULL,
+  lon integer NOT NULL,
+  lat integer NOT NULL,
   PRIMARY KEY (gtfsId)
 );
 
-CREATE TABLE poll (
+CREATE TABLE polls (
   id serial NOT NULL,
   tripGtfsId text NOT NULL,
   stopGtfsId text NOT NULL,
   scheduledArrival integer NOT NULL,
-  realtimeArrival integer,
   arrivalDelay integer NOT NULL,
-  scheduledDeparture integer NOT NULL,
-  realtimeDeparture integer,
-  departureDelay integer NOT NULL,
-  realtime boolean NOT NULL,
-  serviceDay integer NOT NULL,
-  FOREIGN KEY (tripGtfsId) REFERENCES trip(gtfsId),
-  FOREIGN KEY (stopGtfsId) REFERENCES stop(gtfsId),
+  polled_at timestamp default current_timestamp,
+  FOREIGN KEY (tripGtfsId) REFERENCES trips(gtfsId),
+  FOREIGN KEY (stopGtfsId) REFERENCES stops(gtfsId),
   PRIMARY KEY (id)
 );
