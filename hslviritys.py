@@ -1,5 +1,7 @@
 import requests
 import json
+import time 
+import datetime
 
 URL = 'https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql'
 HEADERS = {'Content-Type': 'application/graphql'}
@@ -113,20 +115,46 @@ def get_realtime_for_all(data: {"name": "id"}):
         all.update(next_stops)
     return all
 
-import time 
+    
+def seconds_from_midnight():
+    return time.time() - time.mktime(datetime.date.today().timetuple())
+    
 
+def update_current(old, new, discard_min = 5):
+    """ Returns tuple(updated, discarded)"""
+    
+    # discard time is now + n minutes
+    discard_time = seconds_from_midnight()  + discard_min *60
+    print(discard_time)
+    updated = old.copy()
+    discarded = {}
+    for id, old_data in old.items():
+        if id in new and old_data["stopGtfsId"] == new[id]["stopGtfsId"]:
+            continue
+            
+        elif id not in new and (old_data["scheduledArrival"] + old_data["arrivalDelay"]
+                              > discard_time):
+            discarded[id] = old_data
+            del updated[id]
+        elif id in new:
+            discarded[id] = old_data
+            del updated[id]
+    
+    updated.update(new)
+    return updated, discarded
+    
+    
 def main():
     print(bus_data.keys())
     # return
-    data = bus_data
+    data = {"550": bus_data["550"]}
     previous = get_realtime_for_all(data)
     while True:
         current = get_realtime_for_all(data)
-        print(json.dumps(current, indent=4))
-        for item in yield_changed(previous, current):
-            print("Changes: ")
-            print(json.dumps(item, indent=4))
-        previous = current
+        previous, discarded = update_current(previous, current)
+        for id, item in discarded.items():
+            print("# CHANGED: ", id,  json.dumps(item, indent=4))
+            print("next: ", json.dumps(previous.get(id), indent=4))
         time.sleep(1)
 
 
