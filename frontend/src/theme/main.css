@@ -1,7 +1,13 @@
 .root {
   display: flex;
   min-height: 100vh;
+  height: 100%;
   flex-direction: column;
+}
+
+html, body, #mapid {
+  height: 100%;
+  width: 100%;
 }
 
 .root-content {

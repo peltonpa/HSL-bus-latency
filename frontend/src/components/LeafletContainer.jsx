@@ -11,11 +11,12 @@ export default class LeafletContainer extends React.Component {
     const position = [60.17, 24.94];
     this.busStopIcon = L.icon({
       iconUrl: popupmarkerimage,
+      iconAnchor: [24, 44],
     });
     console.log(this.renderStops());
     return(
       <div id="mapid">
-        <Map center={position} zoom={13} style={{height:"300px"}}>
+        <Map center={position} zoom={13} style={{height:"600px"}}>
           <TileLayer
             url='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors<br><a href="https://thenounproject.com/serre.marc/">Bus stop icon copyright of Marc Serre</a>'
