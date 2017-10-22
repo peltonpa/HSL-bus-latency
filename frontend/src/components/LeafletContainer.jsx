@@ -13,7 +13,7 @@ export default class LeafletContainer extends React.Component {
       iconUrl: popupmarkerimage,
       iconAnchor: [24, 44],
     });
-    console.log(this.renderStops());
+    console.log(this.renderStops())
     return(
       <div id="mapid">
         <Map center={position} zoom={13} style={{height:"600px"}}>
