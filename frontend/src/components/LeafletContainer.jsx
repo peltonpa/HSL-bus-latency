@@ -20,11 +20,6 @@ export default class LeafletContainer extends React.Component {
             url='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors<br><a href="https://thenounproject.com/serre.marc/">Bus stop icon copyright of Marc Serre</a>'
           />
-          <Marker position={position} icon={this.busStopIcon}>
-            <Popup>
-              <span>Popuppi</span>
-            </Popup>
-          </Marker>
           {this.renderStops()}
         </Map>
       </div>
@@ -39,7 +34,7 @@ export default class LeafletContainer extends React.Component {
         const lon = stop["lon"];
         const coords = [lat, lon];
         return(
-          <Marker position={coords} icon={this.busStopIcon}>
+          <Marker key={stop["gtfsId"]} position={coords} icon={this.busStopIcon}>
             <Popup>
               <span>Bus stop</span>
             </Popup>
