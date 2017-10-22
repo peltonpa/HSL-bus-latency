@@ -153,17 +153,19 @@ def main():
     inserter = db_inserter()
     print(bus_data.keys())
     # return
-    data = {"550": bus_data["550"]}
+    data = bus_data
     previous = get_realtime_for_all(data)
     while True:
-        current = get_realtime_for_all(data)
-        previous, visited_stops = update_current(previous, current)
-        for id, item in visited_stops.items():
-            print("# CHANGED: ", id,  json.dumps(item, indent=4))
-            print("next: ", json.dumps(previous.get(id), indent=4))
-            inserter.insert_trip(id, item)
-            inserter.insert_poll(id, item)
-        time.sleep(1)
+        try:
+            current = get_realtime_for_all(data)
+            previous, visited_stops = update_current(previous, current)
+            for id, item in visited_stops.items():
+                print("# CHANGED: ", id,  json.dumps(item, indent=4))
+                print("next: ", json.dumps(previous.get(id), indent=4))
+                inserter.insert_trip(id, item)
+                inserter.insert_poll(id, item)
+        except Exception as e:
+            pass
 
 
 if __name__ == "__main__":
