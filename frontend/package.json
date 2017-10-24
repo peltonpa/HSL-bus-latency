@@ -25,9 +25,11 @@
     "webpack-merge": "^4.1.0"
   },
   "dependencies": {
+    "@blueprintjs/core": "^1.32.0",
     "leaflet": "^1.2.0",
     "prop-types": "^15.6.0",
     "react": "^16.0.0",
+    "react-addons-css-transition-group": "^15.6.2",
     "react-dom": "^16.0.0",
     "react-leaflet": "^1.7.1",
     "url-loader": "^0.6.2"
