@@ -19,7 +19,7 @@ export default class LeafletContainer extends React.Component {
         <Map center={position} zoom={13} style={{height:"740px"}}>
           <TileLayer
             url='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors<br><a href="https://thenounproject.com/serre.marc/">Bus stop icon copyright of Marc Serre</a>'
+            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors<br><a href="http://www.clker.com/clipart-map-symbols-bus-stop-black.html">Bus stop icon by Mohamed Ibrahim at Clker.com</a>'
           />
           {this.renderStops()}
         </Map>
