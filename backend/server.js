@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(bodyParser.json());
-app.use(compression);
+app.use(compression());
 
 app.get("/", (req, res) => {
   console.log(req);
