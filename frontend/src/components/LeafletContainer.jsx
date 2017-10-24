@@ -1,8 +1,8 @@
 import React from "react";
-import { Map, Marker, Popup, TileLayer } from "react-leaflet";
+import { Circle, CircleMarker, Map, Marker, Popup, TileLayer } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import popupmarkerimage from "../theme/bus_stop48x48_bw.png";
+import popupmarkerimage from "../theme/bus_stop_2_36x36.png";
 import busData from "../../../loaders/bus_data.json";
 
 export default class LeafletContainer extends React.Component {
@@ -11,12 +11,12 @@ export default class LeafletContainer extends React.Component {
     const position = [60.17, 24.94];
     this.busStopIcon = L.icon({
       iconUrl: popupmarkerimage,
-      iconAnchor: [24, 44],
+      iconAnchor: [18, 18],
     });
     console.log(this.renderStops())
     return(
       <div id="mapid">
-        <Map center={position} zoom={13} style={{height:"600px"}}>
+        <Map center={position} zoom={13} style={{height:"740px"}}>
           <TileLayer
             url='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors<br><a href="https://thenounproject.com/serre.marc/">Bus stop icon copyright of Marc Serre</a>'
@@ -35,11 +35,18 @@ export default class LeafletContainer extends React.Component {
         const lon = stop["lon"];
         const coords = [lat, lon];
         return(
-          <Marker key={stop["gtfsId"]} position={coords} icon={this.busStopIcon}>
-            <Popup>
-              <span>Bus stop</span>
-            </Popup>
-          </Marker>
+          <div>
+            <Marker key={stop["gtfsId"]} position={coords} icon={this.busStopIcon}>
+              <Popup>
+                <span>Bus stop</span>
+              </Popup>
+            </Marker>
+            <CircleMarker
+              center={coords}
+              radius={40}
+              opacity={0.1}
+            />
+          </div>
         );
       }));
     });
