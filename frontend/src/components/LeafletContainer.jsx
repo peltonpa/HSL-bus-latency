@@ -123,10 +123,10 @@ export default class LeafletContainer extends React.Component {
           <Marker key={stopGtfsId} position={coords} icon={this.busStopIcon}>
             <Popup>
                 <div className="poptext">
-                  <span>Stop name: {stop.name}, {stop.desc}<br /> 
-                    ID: {stopGtfsId}<br />
-                    <a href={stop.url}>Schedules at HSL website</a><br /><br />
-                    Average arrival delay: {this.getDelaySecondsForRendering(stopGtfsId)}
+                  <span><h5>Stop name:</h5> {stop.name}, {stop.desc}<br /><br />
+                    <h5>ID:</h5> {stopGtfsId} <br /><br />
+                    <h5><a href={stop.url}>Info at HSL website</a></h5><br />
+                    <h5>Average arrival delay:</h5> {this.getDelaySecondsForRendering(stopGtfsId)}
                   </span>
                 </div>
             </Popup>
