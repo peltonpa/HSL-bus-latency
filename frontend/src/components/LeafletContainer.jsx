@@ -34,32 +34,30 @@ export default class LeafletContainer extends React.Component {
   } 
 
   async componentDidMount() {
-    console.log("Did update");
-    const stopDelays = await this.getLatency(this.props.visibleStop);
-    setInterval(() => {
-      this.setState({ latencies: stopDelays }, () => {
-        /*
-        Object.keys(this.state.latencies).forEach((key) => {
-          console.log("Key: ", key);
-          console.log("Haku keylllä: ", this.state.latencies[key]);
-        });
-        */
-      });
-      console.log("Stopdelays fetched");
-    }, 5000);
-    console.log("Latencies: ", stopDelays);
-    this.renderStops();
+    await this.runDelays(this.props.visibleStop);
+  }
+
+  async componentWillReceiveProps(nextProps) {
+    await this.runDelays(nextProps.visibleStop); 
+  }
+
+  async runDelays(visibleStop) {
+    const stopDelays = await this.getLatency(visibleStop).then((result) => {
+      return result;
+    });
+    this.setState({ latencies: stopDelays });
   }
   
   async getLatency(line) {
     const busId = busData[line].gtfsId;
-    let allStopsDelayForBus = {};
-    await busData[line].stops.forEach(async (stop) => {
-      const busStopDelay = await this.fetchData(busId, stop.gtfsId).then((res) => {
-        allStopsDelayForBus[stop.gtfsId] = res;
+    let allStops = {};
+    await Promise.all(busData[line].stops.map(async (stop) => {
+      allStops[stop.gtfsId] = await this.fetchData(busId, stop.gtfsId).then((res) => {
+        return res;
       });
-    });
-    return allStopsDelayForBus;
+      return null;
+    }));
+    return allStops;
   }
 
   async fetchData(busId, stopId) {
@@ -85,6 +83,15 @@ export default class LeafletContainer extends React.Component {
     });
     return response;
   }
+
+  getDelaySecondsForRendering(stopGtfsId) {
+    const delay = (stopGtfsId in this.state.latencies && "averageDelay" in this.state.latencies[stopGtfsId]) ? this.state.latencies[stopGtfsId].averageDelay : "No data available for this stop.";
+    if (isNaN(delay)) {
+      return delay;
+    }
+    const toRender = delay > 0 ? <span>{delay}</span> : <span>{delay}</span>;
+    return toRender;
+  }
   
   renderStops() {
     const stopsToBeRendered = [];
@@ -93,26 +100,15 @@ export default class LeafletContainer extends React.Component {
       const lat = stop["lat"];
       const lon = stop["lon"];
       const coords = [lat, lon];
-      /*
-      console.log("State latencyt: ", this.state.latencies);
-      console.log("Testilatency HSL:1461108 : ", this.state.latencies["HSL:1461108"]);
-      console.log("GTfsid nyt: ", stopGtfsId);
-      console.log("Latencyt stopilla: ", this.state.latencies[stopGtfsId]);
-      */
-      /*
-      Object.keys(this.state.latencies).forEach((key) => {
-        console.log("Key: ", key);
-        console.log("Haku keylllä: ", this.state.latencies[key]);
-      });
-      */
+
       return(
         <div>
           <Marker key={stopGtfsId} position={coords} icon={this.busStopIcon}>
             <Popup>
-              <span>Average latency in this stop in seconds on specified timeframe: <br /> 
-                {
-                  stopGtfsId in this.state.latencies && "averageDelay" in this.state.latencies[stopGtfsId] ? this.state.latencies[stopGtfsId].averageDelay : "No data available for this stop."
-                }
+              <span>Stop name: {stop.desc}, {stop.name}<br /> 
+              ID: {stopGtfsId}<br />
+              <a href={stop.url}>Schedules at HSL website</a><br />
+                {this.getDelaySecondsForRendering(stopGtfsId)}
               </span>
             </Popup>
           </Marker>

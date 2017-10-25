@@ -4,6 +4,7 @@ import LeafletContainer from "./LeafletContainer";
 import WelcomeBox from "./WelcomeBox";
 import "leaflet/dist/leaflet.css";
 import "../theme/main.css";
+import "@blueprintjs/core/dist/blueprint.css";
 import busData from "../../../loaders/bus_data.json";
 
 export default class App extends React.Component {
@@ -27,7 +28,7 @@ export default class App extends React.Component {
         </div>
         <div className="root-content buslines">
           <BuslineSettings 
-            onclick={() => console.log("Click")} 
+            onclick={() => this.setState({ selectedBus: 58})} 
           />
         </div>
       </div>
