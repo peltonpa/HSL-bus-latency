@@ -12,6 +12,11 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 app.use(compression());
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 app.get("/", (req, res) => {
   console.log(req);
@@ -23,7 +28,6 @@ app.get("/bundle.js", (req, res) => {
 });
 
 app.post("/hslapi", async (req, res) => {
-  console.log(req.body);
   const query = await pool.query(
     "SELECT * FROM polls WHERE tripgtfsid IN (" +
       `SELECT gtfsid FROM trips WHERE substring(gtfsid, 1, 8) LIKE '${req.body.tripgtfsid}%' ` +
