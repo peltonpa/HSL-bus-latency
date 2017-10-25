@@ -26,7 +26,8 @@ app.post("/hslapi", async (req, res) => {
   console.log(req.body);
   const query = await pool.query(
     "SELECT * FROM polls WHERE tripgtfsid IN (" +
-      `SELECT gtfsid FROM trips WHERE time BETWEEN ${req.body.starts} AND ${req.body.ends}` +
+      `SELECT gtfsid FROM trips WHERE substring(gtfsid, 1, 8) LIKE '${req.body.tripgtfsid}%' ` +
+      `AND time BETWEEN ${req.body.starts} AND ${req.body.ends}` + 
     `) AND stopgtfsid = '${req.body.stopgtfsid}'`
   );
   const arrivalDelays = query.rows.map(row => row.arrivaldelay);
