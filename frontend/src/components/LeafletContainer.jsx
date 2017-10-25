@@ -89,7 +89,9 @@ export default class LeafletContainer extends React.Component {
     if (isNaN(delay)) {
       return delay;
     }
-    const toRender = delay > 0 ? <span>{delay}</span> : <span>{delay}</span>;
+    const red = { color: "red" };
+    const blue = { color: "blue" };
+    const toRender = delay > 0 ? <span style={red}>{Math.floor(delay)}</span> : <span style={blue}>{Math.floor(delay)}</span>;
     return toRender;
   }
   
@@ -108,7 +110,7 @@ export default class LeafletContainer extends React.Component {
               <span>Stop name: {stop.desc}, {stop.name}<br /> 
               ID: {stopGtfsId}<br />
               <a href={stop.url}>Schedules at HSL website</a><br />
-                {this.getDelaySecondsForRendering(stopGtfsId)}
+              Average arrival delay in seconds: {this.getDelaySecondsForRendering(stopGtfsId)}
               </span>
             </Popup>
           </Marker>
