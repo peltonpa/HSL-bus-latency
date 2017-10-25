@@ -71,7 +71,7 @@ export default class LeafletContainer extends React.Component {
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
     const json = JSON.stringify(data);
-    const response = await fetch("http://localhost:9001/hslapi", {
+    const response = await fetch("http://hsldata.science/hslapi", {
       method: "POST",
       headers: headers,
       body: json,
