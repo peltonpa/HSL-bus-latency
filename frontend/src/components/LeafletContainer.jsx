@@ -36,7 +36,7 @@ export default class LeafletContainer extends React.Component {
   async componentDidMount() {
     console.log("Did update");
     const stopDelays = await this.getLatency(this.props.visibleStop);
-    setTimeout(() => {
+    setInterval(() => {
       this.setState({ latencies: stopDelays }, () => {
         /*
         Object.keys(this.state.latencies).forEach((key) => {
@@ -45,7 +45,8 @@ export default class LeafletContainer extends React.Component {
         });
         */
       });
-    }, 3000);
+      console.log("Stopdelays fetched");
+    }, 5000);
     console.log("Latencies: ", stopDelays);
     this.renderStops();
   }
