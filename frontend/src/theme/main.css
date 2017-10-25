@@ -15,6 +15,14 @@ html, body, #mapid {
   position: relative;
 }
 
+.poptext {
+  padding: 10px;
+  margin: 10px;
+  display: inline-block;
+  font-family: monospace;
+  text-align: left;
+}
+
 .root-content {
   position: relative;
   z-index: 1;
@@ -32,7 +40,7 @@ html, body, #mapid {
   position: absolute;
   top: 30%;
   left: 25%;
-  width: 500px; height: 100px; margin-top: 50px; margin-left: auto; margin-right: auto;   
+  width: 500px; height: 200px; margin-top: 50px; margin-left: auto; margin-right: auto;   
   background: rgba(255,255,255,0.9);
   padding: 30px;
   -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.15);
@@ -44,6 +52,10 @@ html, body, #mapid {
   -o-border-radius: 5px;
   border-radius: 20px;
   z-index: 9999;
+}
+
+.delaytext {
+  display: flex;
 }
 
 .hidden {

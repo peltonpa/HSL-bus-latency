@@ -1,5 +1,6 @@
 import React from "react";
 import { Circle, CircleMarker, Map, Marker, Popup, TileLayer } from "react-leaflet";
+import { Spinner } from "@blueprintjs/core";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import popupmarkerimage from "../theme/bus_stop_2_36x36.png";
@@ -87,12 +88,26 @@ export default class LeafletContainer extends React.Component {
   getDelaySecondsForRendering(stopGtfsId) {
     const delay = (stopGtfsId in this.state.latencies && "averageDelay" in this.state.latencies[stopGtfsId]) ? this.state.latencies[stopGtfsId].averageDelay : "No data available for this stop.";
     if (isNaN(delay)) {
-      return delay;
+      const spanStyle = {
+        fontSize: "75%",
+      };
+      return (
+        <div>
+          <span>Fetching data... <Spinner /></span> 
+          <br />
+          <span style={spanStyle}>(This might take a few seconds)</span>
+        </div>
+      );
     }
-    const red = { color: "red" };
-    const blue = { color: "blue" };
-    const toRender = delay > 0 ? <span style={red}>{Math.floor(delay)}</span> : <span style={blue}>{Math.floor(delay)}</span>;
-    return toRender;
+    const minutes = Math.floor(delay / 60);
+    const seconds = Math.floor(delay % 60);
+    const red = { color: "crimson", fontSize: "200%" };
+    const blue = { color: "lightskyblue", fontSize: "200%" };
+    
+  const toRender = delay > 0 ? 
+  <div className="delaytext"><span style={red}>{minutes}</span><p> &nbsp;minutes&nbsp; </p><span style={red}>{seconds}</span><p> &nbsp;seconds&nbsp; </p></div> : 
+  <div className="delaytext"><span style={blue}>{minutes}</span><p> &nbsp;minutes&nbsp; </p><span style={blue}>{seconds}</span><p> &nbsp;seconds&nbsp; </p></div>;
+  return toRender;
   }
   
   renderStops() {
@@ -107,11 +122,13 @@ export default class LeafletContainer extends React.Component {
         <div>
           <Marker key={stopGtfsId} position={coords} icon={this.busStopIcon}>
             <Popup>
-              <span>Stop name: {stop.desc}, {stop.name}<br /> 
-              ID: {stopGtfsId}<br />
-              <a href={stop.url}>Schedules at HSL website</a><br />
-              Average arrival delay in seconds: {this.getDelaySecondsForRendering(stopGtfsId)}
-              </span>
+                <div className="poptext">
+                  <span>Stop name: {stop.name}, {stop.desc}<br /> 
+                    ID: {stopGtfsId}<br />
+                    <a href={stop.url}>Schedules at HSL website</a><br /><br />
+                    Average arrival delay: {this.getDelaySecondsForRendering(stopGtfsId)}
+                  </span>
+                </div>
             </Popup>
           </Marker>
           <CircleMarker
