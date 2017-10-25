@@ -95,7 +95,7 @@ export default class LeafletContainer extends React.Component {
         <div>
           <span>Fetching data... <Spinner /></span> 
           <br />
-          <span style={spanStyle}>(This might take a few seconds)</span>
+          <span style={spanStyle}>(This might take ten seconds)</span>
         </div>
       );
     }

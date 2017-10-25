@@ -13,6 +13,11 @@ export default class App extends React.Component {
     this.state = {
       selectedBus: 14,
     };
+    this.setLine = this.setLine.bind(this);
+  }
+
+  setLine(line) {
+    this.setState({ selectedBus: line });
   }
 
   render() {
@@ -28,7 +33,7 @@ export default class App extends React.Component {
         </div>
         <div className="root-content buslines">
           <BuslineSettings 
-            onclick={() => this.setState({ selectedBus: 58})} 
+            onclick={this.setLine} 
           />
         </div>
       </div>
