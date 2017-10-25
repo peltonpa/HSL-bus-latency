@@ -1,13 +1,19 @@
 import React from "react";
-import { Map, Marker, Popup, TileLayer } from "react-leaflet";
-import L from "leaflet";
 import BuslineSettings from "./BuslineSettings";
 import LeafletContainer from "./LeafletContainer";
 import WelcomeBox from "./WelcomeBox";
 import "leaflet/dist/leaflet.css";
 import "../theme/main.css";
+import busData from "../../../loaders/bus_data.json";
 
 export default class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      selectedBus: 14,
+    };
+  }
+
   render() {
     return(
       <div className="root-content">
@@ -16,11 +22,13 @@ export default class App extends React.Component {
         </div>
         <div id="mapid">
           <LeafletContainer
-            visibleStops={[14]} 
+            visibleStop={this.state.selectedBus} 
           />
         </div>
         <div className="root-content buslines">
-          <BuslineSettings />
+          <BuslineSettings 
+            onclick={() => console.log("Click")} 
+          />
         </div>
       </div>
     );

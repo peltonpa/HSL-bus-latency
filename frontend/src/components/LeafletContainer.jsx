@@ -6,6 +6,13 @@ import popupmarkerimage from "../theme/bus_stop_2_36x36.png";
 import busData from "../../../loaders/bus_data.json";
 
 export default class LeafletContainer extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      latencies: {},
+    }
+  }
+
   render() {
     this.fixLeafletImagePaths();
     const position = [60.17, 24.94];
@@ -13,7 +20,6 @@ export default class LeafletContainer extends React.Component {
       iconUrl: popupmarkerimage,
       iconAnchor: [18, 18],
     });
-    console.log(this.renderStops())
     return(
       <div id="mapid">
         <Map center={position} zoom={13} style={{height:"740px"}}>
@@ -26,30 +32,97 @@ export default class LeafletContainer extends React.Component {
       </div>
     );
   } 
+
+  async componentDidMount() {
+    console.log("Did update");
+    const stopDelays = await this.getLatency(this.props.visibleStop);
+    setTimeout(() => {
+      this.setState({ latencies: stopDelays }, () => {
+        /*
+        Object.keys(this.state.latencies).forEach((key) => {
+          console.log("Key: ", key);
+          console.log("Haku keylllä: ", this.state.latencies[key]);
+        });
+        */
+      });
+    }, 3000);
+    console.log("Latencies: ", stopDelays);
+    this.renderStops();
+  }
+  
+  async getLatency(line) {
+    const busId = busData[line].gtfsId;
+    let allStopsDelayForBus = {};
+    await busData[line].stops.forEach(async (stop) => {
+      const busStopDelay = await this.fetchData(busId, stop.gtfsId).then((res) => {
+        allStopsDelayForBus[stop.gtfsId] = res;
+      });
+    });
+    return allStopsDelayForBus;
+  }
+
+  async fetchData(busId, stopId) {
+    const data = {
+      "starts": 0,
+      "ends": 10000,
+      "stopgtfsid": stopId,
+      "tripgtfsid": busId,
+    };
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    const json = JSON.stringify(data);
+    const response = await fetch("http://localhost:9001/hslapi", {
+      method: "POST",
+      headers: headers,
+      body: json,
+      cache: "default",
+      mode: "cors"
+    }).then((res) => {
+      return res.json();
+    }).then((dataRes) => {
+      return dataRes;
+    });
+    return response;
+  }
   
   renderStops() {
     const stopsToBeRendered = [];
-    this.props.visibleStops.forEach((visibleStop) => {
-      stopsToBeRendered.push(busData[visibleStop]["stops"].map((stop) => {
-        const lat = stop["lat"];
-        const lon = stop["lon"];
-        const coords = [lat, lon];
-        return(
-          <div>
-            <Marker key={stop["gtfsId"]} position={coords} icon={this.busStopIcon}>
-              <Popup>
-                <span>Bus stop</span>
-              </Popup>
-            </Marker>
-            <CircleMarker
-              center={coords}
-              radius={40}
-              opacity={0.1}
-            />
-          </div>
-        );
-      }));
-    });
+    stopsToBeRendered.push(busData[this.props.visibleStop]["stops"].map((stop) => {
+      const stopGtfsId = stop.gtfsId;
+      const lat = stop["lat"];
+      const lon = stop["lon"];
+      const coords = [lat, lon];
+      /*
+      console.log("State latencyt: ", this.state.latencies);
+      console.log("Testilatency HSL:1461108 : ", this.state.latencies["HSL:1461108"]);
+      console.log("GTfsid nyt: ", stopGtfsId);
+      console.log("Latencyt stopilla: ", this.state.latencies[stopGtfsId]);
+      */
+      /*
+      Object.keys(this.state.latencies).forEach((key) => {
+        console.log("Key: ", key);
+        console.log("Haku keylllä: ", this.state.latencies[key]);
+      });
+      */
+      return(
+        <div>
+          <Marker key={stopGtfsId} position={coords} icon={this.busStopIcon}>
+            <Popup>
+              <span>Average latency in this stop in seconds on specified timeframe: <br /> 
+                {
+                  stopGtfsId in this.state.latencies && "averageDelay" in this.state.latencies[stopGtfsId] ? this.state.latencies[stopGtfsId].averageDelay : "No data available for this stop."
+                }
+              </span>
+            </Popup>
+          </Marker>
+          <CircleMarker
+            center={coords}
+            radius={40}
+            opacity={0.1}
+          />
+        </div>
+      );
+    }));
     return stopsToBeRendered;
   }
 

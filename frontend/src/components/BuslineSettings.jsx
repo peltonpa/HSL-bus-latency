@@ -6,7 +6,7 @@ export default class BuslineSettings extends React.Component {
     return(
       <div>
         <Button 
-          onClick={console.log("Context: ", this.context)}
+          onClick={this.props.onclick}
           text="Testi" 
         />
       </div>
