@@ -104,10 +104,10 @@ export default class LeafletContainer extends React.Component {
     const red = { color: "crimson", fontSize: "200%" };
     const blue = { color: "lightskyblue", fontSize: "200%" };
     
-  const toRender = delay > 0 ? 
-  <div className="delaytext"><span style={red}>{minutes}</span><p> &nbsp;minutes&nbsp; </p><span style={red}>{seconds}</span><p> &nbsp;seconds&nbsp; </p></div> : 
-  <div className="delaytext"><span style={blue}>{minutes}</span><p> &nbsp;minutes&nbsp; </p><span style={blue}>{seconds}</span><p> &nbsp;seconds&nbsp; </p></div>;
-  return toRender;
+    const toRender = delay > 0 ? 
+    <div className="delaytext"><span style={red}>{minutes}</span><p> &nbsp;minutes&nbsp; </p><span style={red}>{seconds}</span><p> &nbsp;seconds&nbsp; </p></div> : 
+    <div className="delaytext"><span style={blue}>{minutes}</span><p> &nbsp;minutes&nbsp; </p><span style={blue}>{seconds}</span><p> &nbsp;seconds&nbsp; </p></div>;
+    return toRender;
   }
   
   renderStops() {
@@ -132,6 +132,7 @@ export default class LeafletContainer extends React.Component {
             </Popup>
           </Marker>
           <CircleMarker
+            color={(stopGtfsId in this.state.latencies && "averageDelay" in this.state.latencies[stopGtfsId] && this.state.latencies[stopGtfsId].averageDelay > 0) ? "red" : "blue" }
             center={coords}
             radius={40}
             opacity={0.1}
