@@ -29,16 +29,13 @@ app.get("/bundle.js", (req, res) => {
 
 app.post("/hslapi", async (req, res) => {
   const query = await pool.query(
-    "SELECT * FROM polls WHERE tripgtfsid IN (" +
+    "SELECT avg(arrivalDelay) FROM polls WHERE tripgtfsid IN (" +
       `SELECT gtfsid FROM trips WHERE substring(gtfsid, 1, 8) LIKE '${req.body.tripgtfsid}%' ` +
       `AND time BETWEEN ${req.body.starts} AND ${req.body.ends}` + 
     `) AND stopgtfsid = '${req.body.stopgtfsid}'`
   );
-  const arrivalDelays = query.rows.map(row => row.arrivaldelay);
-  const totalDelaySeconds = arrivalDelays.reduce((sum, delay) => sum + delay, 0);
-  const averageDelay = totalDelaySeconds / query.rows.length;
   const response = {
-    "averageDelay": averageDelay
+    "averageDelay": query.rows[0].avg,
   };
   res.send(response);
 });
