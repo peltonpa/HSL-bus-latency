@@ -12,12 +12,27 @@ export default class App extends React.Component {
     super();
     this.state = {
       selectedBus: 14,
+      loading: true,
     };
     this.setLine = this.setLine.bind(this);
+    this.loading = this.loading.bind(this);
+    this.notLoading = this.notLoading.bind(this);
+  }
+
+  componentDidMount() {
+    this._mounted = true;
   }
 
   setLine(line) {
     this.setState({ selectedBus: line });
+  }
+
+  loading() {
+    this.setState({ loading: true });
+  }
+
+  notLoading() {
+    this.setState({ loading: false });
   }
 
   render() {
@@ -29,11 +44,14 @@ export default class App extends React.Component {
         <div id="mapid">
           <LeafletContainer
             visibleStop={this.state.selectedBus} 
+            notLoading={this.notLoading}
           />
         </div>
         <div className="root-content buslines">
           <BuslineSettings 
             onclick={this.setLine} 
+            loading={this.loading}
+            isLoading={this.state.loading}
           />
         </div>
       </div>

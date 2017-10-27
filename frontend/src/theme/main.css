@@ -58,6 +58,35 @@ html, body, #mapid {
   display: flex;
 }
 
+@-webkit-keyframes dots {
+  0% { background-position: 0px; }
+  100% { background-position: 50px; }
+}
+
+.loadingtext {
+  font-family: 'Roboto', sans-serif;
+}
+
+.spinner-middle {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.load-text {
+  font-size: 70%;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.dots {
+  background: linear-gradient(to right, white 50%, black 50%);
+  color: transparent;
+  -webkit-background-clip: text;
+  -webkit-animation: dots 1.5s infinite steps(4);
+  padding-right: 40px;
+  margin-right: -40px;
+}
+
 .hidden {
   display: none;
 }

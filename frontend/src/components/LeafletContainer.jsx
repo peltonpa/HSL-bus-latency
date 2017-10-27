@@ -10,7 +10,7 @@ export default class LeafletContainer extends React.Component {
   constructor() {
     super();
     this.state = {
-      latencies: {},
+      latencies: {currentBus: 14},
     }
   }
 
@@ -36,6 +36,7 @@ export default class LeafletContainer extends React.Component {
 
   async componentDidMount() {
     await this.runDelays(this.props.visibleStop);
+    this._ismounted = true;
   }
 
   async componentWillReceiveProps(nextProps) {
@@ -87,6 +88,11 @@ export default class LeafletContainer extends React.Component {
 
   getDelaySecondsForRendering(stopGtfsId) {
     const delay = (stopGtfsId in this.state.latencies && "averageDelay" in this.state.latencies[stopGtfsId]) ? this.state.latencies[stopGtfsId].averageDelay : "No data available for this stop.";
+    if (delay == null) {
+      return(
+        <span>No data available for this stop. </span>
+      )
+    }
     if (isNaN(delay)) {
       const spanStyle = {
         fontSize: "75%",

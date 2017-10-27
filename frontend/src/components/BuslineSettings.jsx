@@ -17,9 +17,14 @@ export default class BuslineSettings extends React.Component {
         <Button 
           onClick={() => this.setState({ isOpen: !this.state.isOpen })}
           text={<span>Select bus <Icon iconName={this.state.isOpen ? "pt-icon-double-chevron-up" : "pt-icon-double-chevron-down"} /></span>}
+          className="pt-large pt-dark"
         />
         <Collapse isOpen={this.state.isOpen}>
-          <BuslineSelector onclick={this.props.onclick} />
+          <BuslineSelector 
+            onclick={this.props.onclick} 
+            loading={this.props.loading} 
+            isLoading={this.props.isLoading}
+          />
         </Collapse>
       </div>
     );
