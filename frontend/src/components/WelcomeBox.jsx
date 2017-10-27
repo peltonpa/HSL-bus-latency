@@ -17,6 +17,11 @@ export default class BuslineSettings extends React.Component {
           compared those times to HSL's schedules. Click on a bus stop to
           see if the bus was (on average) late or early on that specific stop.
         </p>
+        <p>Instructions: Select buslines from the button on the left. Click
+          on a bus stop on the map to get the average delay of buses on that stop.
+          You can adjust time frames from the slider below to specify
+          what times you want to take into account when getting the 
+          average delay of the bus.</p>
         <Button 
           onClick={() => {
             this.setState({

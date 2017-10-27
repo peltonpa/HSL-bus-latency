@@ -35,17 +35,17 @@ export default class LeafletContainer extends React.Component {
   } 
 
   async componentDidMount() {
-    await this.runDelays(this.props.visibleStop);
+    await this.runDelays(this.props.visibleStop, this.props.range);
     this._ismounted = true;
   }
 
   async componentWillReceiveProps(nextProps) {
-    await this.runDelays(nextProps.visibleStop); 
+    await this.runDelays(nextProps.visibleStop, nextProps.range); 
   }
 
-  async runDelays(visibleStop) {
+  async runDelays(visibleStop, range) {
     const oldLatency = Object.keys(this.state.latencies)[0] ? Object.keys(this.state.latencies).sort()[0] : "";
-    const stopDelays = await this.getLatency(visibleStop).then((result) => {
+    const stopDelays = await this.getLatency(visibleStop, range[0] * 100, range[1] * 100).then((result) => {
       return result;
     });
     this.setState({ latencies: stopDelays }, () => {
@@ -55,22 +55,21 @@ export default class LeafletContainer extends React.Component {
     });
   }
   
-  async getLatency(line) {
+  async getLatency(line, start, end) {
     const busId = busData[line].gtfsId;
     let allStops = {currentBus: line};
     const stops = busData[line].stops.map((stop) => {
       return stop.gtfsId;
     });
-    let response = await this.fetchData(busId, stops);
+    let response = await this.fetchData(busId, stops, start, end);
     response.currentBus = line;
-    console.log("Response: ", response);
     return response;
   }
 
-  async fetchData(busId, stopIds) {
+  async fetchData(busId, stopIds, start, end) {
     const data = {
-      "starts": 0,
-      "ends": 10000,
+      "starts": start,
+      "ends": end,
       "stopgtfsids": stopIds,
       "tripgtfsid": busId,
     };
@@ -98,7 +97,7 @@ export default class LeafletContainer extends React.Component {
         <span>No data available for this stop. </span>
       )
     }
-    if (isNaN(delay)) {
+    if (this.props.isLoading) {
       const spanStyle = {
         fontSize: "75%",
       };

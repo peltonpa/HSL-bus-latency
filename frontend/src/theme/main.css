@@ -5,6 +5,10 @@
   flex-direction: column;
 }
 
+body {
+  overflow-x: hidden;
+}
+
 html, body, #mapid {
   height: 90%;
   width: 100%;
@@ -38,9 +42,27 @@ html, body, #mapid {
 
 .white-box { 
   position: absolute;
-  top: 30%;
-  left: 25%;
-  width: 500px; height: 200px; margin-top: 50px; margin-left: auto; margin-right: auto;   
+  top: 18%;
+  left: 30%;
+  width: 500px; height: 300px; margin-top: 50px; margin-left: auto; margin-right: auto;   
+  background: rgba(255,255,255,0.9);
+  padding: 30px;
+  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  -moz-box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 20px;
+  z-index: 9999;
+}
+
+.slider-box {
+  position: absolute;
+  top: 65%;
+  left: 30%;
+  width: 500px; height: 100px; margin-top: 50px; margin-left: auto; margin-right: auto;   
   background: rgba(255,255,255,0.9);
   padding: 30px;
   -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.15);
@@ -61,6 +83,26 @@ html, body, #mapid {
 @-webkit-keyframes dots {
   0% { background-position: 0px; }
   100% { background-position: 50px; }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background: rgba(64, 97, 109, 0.8); 
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}
+::-webkit-scrollbar-thumb:window-inactive {
+background: rgba(67, 85, 109, 0.4); 
 }
 
 .loadingtext {
