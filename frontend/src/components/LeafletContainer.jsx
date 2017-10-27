@@ -10,7 +10,7 @@ export default class LeafletContainer extends React.Component {
   constructor() {
     super();
     this.state = {
-      latencies: {currentBus: 14},
+      latencies: {currentBus: 14, range: [4, 20]},
     }
   }
 
@@ -40,7 +40,13 @@ export default class LeafletContainer extends React.Component {
   }
 
   async componentWillReceiveProps(nextProps) {
-    await this.runDelays(nextProps.visibleStop, nextProps.range); 
+    if (this.propsCheck(this.props, nextProps)) {
+      await this.runDelays(nextProps.visibleStop, nextProps.range); 
+    }
+  }
+
+  propsCheck(prev, next) {
+    return (prev.range[0] !== next.range[0] || prev.range[1] !== next.range[1] || prev.visibleStop !== next.visibleStop); 
   }
 
   async runDelays(visibleStop, range) {
@@ -49,20 +55,24 @@ export default class LeafletContainer extends React.Component {
       return result;
     });
     this.setState({ latencies: stopDelays }, () => {
-      if (this.props.visibleStop === this.state.latencies.currentBus) {
+      const dividedRange = this.state.latencies.range.map(range => { return range / 100 });
+      if ((this.props.range[0] ===  dividedRange[0] && this.props.range[1] === dividedRange[1]) && this.props.visibleStop === this.state.latencies.currentBus) {
         this.props.notLoading();
       }
     });
   }
   
   async getLatency(line, start, end) {
+    console.log("fetsataan data");
     const busId = busData[line].gtfsId;
     let allStops = {currentBus: line};
     const stops = busData[line].stops.map((stop) => {
       return stop.gtfsId;
     });
     let response = await this.fetchData(busId, stops, start, end);
+    console.log("fetsattu");
     response.currentBus = line;
+    response.range = [start, end];
     return response;
   }
 
