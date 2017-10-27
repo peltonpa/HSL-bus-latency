@@ -44,29 +44,34 @@ export default class LeafletContainer extends React.Component {
   }
 
   async runDelays(visibleStop) {
+    const oldLatency = Object.keys(this.state.latencies)[0] ? Object.keys(this.state.latencies).sort()[0] : "";
     const stopDelays = await this.getLatency(visibleStop).then((result) => {
       return result;
     });
-    this.setState({ latencies: stopDelays });
+    this.setState({ latencies: stopDelays }, () => {
+      if (this.props.visibleStop === this.state.latencies.currentBus) {
+        this.props.notLoading();
+      }
+    });
   }
   
   async getLatency(line) {
     const busId = busData[line].gtfsId;
-    let allStops = {};
-    await Promise.all(busData[line].stops.map(async (stop) => {
-      allStops[stop.gtfsId] = await this.fetchData(busId, stop.gtfsId).then((res) => {
-        return res;
-      });
-      return null;
-    }));
-    return allStops;
+    let allStops = {currentBus: line};
+    const stops = busData[line].stops.map((stop) => {
+      return stop.gtfsId;
+    });
+    let response = await this.fetchData(busId, stops);
+    response.currentBus = line;
+    console.log("Response: ", response);
+    return response;
   }
 
-  async fetchData(busId, stopId) {
+  async fetchData(busId, stopIds) {
     const data = {
       "starts": 0,
       "ends": 10000,
-      "stopgtfsid": stopId,
+      "stopgtfsids": stopIds,
       "tripgtfsid": busId,
     };
     const headers = new Headers();

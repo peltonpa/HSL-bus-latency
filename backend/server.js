@@ -28,15 +28,24 @@ app.get("/bundle.js", (req, res) => {
 });
 
 app.post("/hslapi", async (req, res) => {
+  let gtfsIdString = "";
+  req.body.stopgtfsids.forEach((stop) => {
+    gtfsIdString += "'" + stop + "', ";
+  });
+  gtfsIdString = gtfsIdString.substring(0, gtfsIdString.length - 2);
+
   const query = await pool.query(
-    "SELECT avg(arrivalDelay) FROM polls WHERE tripgtfsid IN (" +
+    "SELECT stopgtfsid, avg(arrivalDelay) FROM polls WHERE tripgtfsid IN (" +
       `SELECT gtfsid FROM trips WHERE substring(gtfsid, 1, 8) LIKE '${req.body.tripgtfsid}%' ` +
       `AND time BETWEEN ${req.body.starts} AND ${req.body.ends}` + 
-    `) AND stopgtfsid = '${req.body.stopgtfsid}'`
+    `) AND stopgtfsid IN (${gtfsIdString}) GROUP BY stopgtfsid`
   );
-  const response = {
-    "averageDelay": query.rows[0].avg,
-  };
+
+  const response = query.rows.reduce((resDict, row) => {
+    resDict[row.stopgtfsid] = { averageDelay: row.avg };
+    return resDict;
+  }, {});
+
   res.send(response);
 });
 
