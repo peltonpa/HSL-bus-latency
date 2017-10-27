@@ -24,7 +24,7 @@ export default class BuslineSettings extends React.Component {
           max={24} 
           stepSize={1}
           labelStepSize={1}
-          onChange={(range) => {
+          onRelease={(range) => {
             this.handleValueChange(range);
             this.props.loading();
             this.props.setRange(range);
