@@ -36,7 +36,7 @@ app.post("/hslapi", async (req, res) => {
 
   const query = await pool.query(
     "SELECT stopgtfsid, avg(arrivalDelay) FROM polls WHERE tripgtfsid IN (" +
-      `SELECT gtfsid FROM trips WHERE substring(gtfsid, 1, 8) LIKE '${req.body.tripgtfsid}%' ` +
+      `SELECT gtfsid FROM trips WHERE substring(gtfsid, 1, ${req.body.tripgtfsid.length}) LIKE '${req.body.tripgtfsid}%' ` +
       `AND time BETWEEN ${req.body.starts} AND ${req.body.ends}` + 
     `) AND stopgtfsid IN (${gtfsIdString}) GROUP BY stopgtfsid`
   );
